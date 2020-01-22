@@ -48,6 +48,7 @@ ui <- shinyUI({dashboardPage(
 ## --------------- SIDE BAR --------------
     dashboardSidebar(
         span(HTML('<img src="R-pic.png" style="height:200px; margin-top:-0.5em;">')),
+        
         sliderInput(inputId = "PSA_len_slider","How many PSA?",1,2000,value = 100),
         
         numericInput(inputId = "start_age_input","Start age",min = 0,max=90,value = 16),
@@ -97,17 +98,22 @@ ui <- shinyUI({dashboardPage(
                                 }
 
                                 '))),
-        fluidRow(column(6, 
-                        h4("Cost-effectiveness plance"),
-                        plotOutput("CE_plane")),
-                 column(6,
-                        h4("Cost-effectiveness acceptibility curve"),
-                        plotOutput("CEAC_plot"))
-                 ),
+        
+        fluidRow(column(2),
+                 column(6,h4("Results Table: Central Estimates"),
+                        tableOutput("result_table")),
+                 column(2)),#actionButton("trump_GO","Trump_me"),
+                       # HTML('<img src="trump_up.png" style="height:30px; margin-top:-0.5em;">'))),
         
         br(),
         
-        
+        fluidRow(column(6, 
+                        h4("Cost-effectiveness plane"),
+                        plotOutput("CE_plane")),
+                 column(6,
+                        h4("Cost-effectiveness acceptability curve"),
+                        plotOutput("CEAC_plot"))
+                 ),
         
         br(),
         
@@ -124,6 +130,7 @@ skin = "blue"
 
 # Define server logic required to draw a histogram
 server <- function(input, output) {
+  
     
         observeEvent(input$action_GO, ignoreNULL=F, {
             
@@ -140,6 +147,18 @@ server <- function(input, output) {
                                     set_iv_day_costs = input$iv_day_costs_input
                                         
                                         )
+            
+            output$result_table <- renderTable({
+              data.frame(
+                Option = c("Adherance Intervention","Current Care"),
+                QALYs = c(res$res_table[2],res$res_table[1]),
+                Costs = c(res$res_table[4],res$res_table[5]),
+                Inc.QALYs = c(res$res_table[3],NA),
+                Inc.Costs = c(res$res_table[6],NA),
+                ICER = c(res$res_table[6]/res$res_table[3],NA)
+              )
+            })
+            
             
             output$CE_plane <- renderPlot({
                 res$ce_plane
