@@ -12,6 +12,25 @@ library(shinyjs)
 library(MCMCpack)
 library(ggplot2)
 library(DT)
+library(shinycssloaders)
+
+# loading screen   
+appCSS <- "
+                  #loading-content {
+                    position: absolute;
+                    background: #000000;
+                    padding-top: 250px;
+                    opacity: 0.9;
+                    z-index: 100;
+                    font-size:30px;
+                    left: 0;
+                    right: 0;
+                    height: 100%;
+                    text-align: center;
+                    color: cyan;
+                  }
+                  "
+
 # install.packages("shinysky")
 
 source("./support_functions.R")
@@ -21,10 +40,14 @@ source("./Markov_PSA.R")
 # Define UI for application that draws a histogram
 ui <- shinyUI({dashboardPage(
     
+    
+    
     dashboardHeader(),
+
     
 ## --------------- SIDE BAR --------------
     dashboardSidebar(
+        span(HTML('<img src="R-pic.png" style="height:200px; margin-top:-0.5em;">')),
         sliderInput(inputId = "PSA_len_slider","How many PSA?",1,2000,value = 100),
         
         numericInput(inputId = "start_age_input","Start age",min = 0,max=90,value = 16),
@@ -40,6 +63,17 @@ ui <- shinyUI({dashboardPage(
 
 ## --------------- BODY --------------
     dashboardBody(
+        
+        useShinyjs(),
+        inlineCSS(appCSS),
+        
+        # Loading message
+        div(
+            id = "loading-content",
+            HTML("Loading...<br>"),
+            HTML("Just one moment please.")
+        ),
+        
         tags$head(tags$style(HTML('
                                 /* logo */
                                 .skin-blue .main-header .logo {
@@ -93,7 +127,8 @@ server <- function(input, output) {
     
         observeEvent(input$action_GO, ignoreNULL=F, {
             
-            
+            hide("app-content")
+            show(id = "loading-content", anim = TRUE, animType = "fade",time = 1)    
             
             
             # run model with updated input
@@ -119,7 +154,8 @@ server <- function(input, output) {
                 paste("PSA runtime with",input$PSA_len_slider,"iterations:",res$runtime)
             })
             
-            
+            hide(id = "loading-content", anim = TRUE, animType = "fade",time = 1)    
+            show("app-content")
             
             
         })
