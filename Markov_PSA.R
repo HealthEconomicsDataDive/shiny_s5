@@ -25,7 +25,8 @@ markov_s5_wrapper = function(set_PSA = NULL,
                              set_start_age = 16,
                              set_DR_COSTS = 0.035,
                              set_DR_QALY = 0.035,
-                             set_int_costs_yearly = NULL
+                             set_int_costs_yearly = NULL,
+                             set_iv_day_costs = NULL
                              ){
 
 t1 = Sys.time()
@@ -36,7 +37,8 @@ t1 = Sys.time()
 ### Setup
   cycle_length = set_cycle_length          # observational period - 84 years
   start_age = set_start_age             # age at which agents enter the model - 16
-  DR_QALY = DR_COSTS = 0.035 # discount rates for costs and QALYs - 3.5%
+  DR_QALY = set_DR_QALY
+  DR_COSTS = set_DR_QALY # 0.035 # discount rates for costs and QALYs - 3.5%
   
   # we only have survival for age < 101 years. 
   # To avoid errors in shiny:
@@ -63,7 +65,12 @@ t1 = Sys.time()
     set_int_costs_yearly = 5000
   }
   
-  psa.input <- replicate(n=PSA_length,expr = draw_params(int_costs_yearly = set_int_costs_yearly),simplify = F)                     
+  psa.input <- replicate(n=PSA_length,
+                         expr = draw_params(int_costs_yearly = set_int_costs_yearly,
+                                            iv_day_costs = set_iv_day_costs
+                                            ),
+                         
+                         simplify = F)                     
   
 ## RUN PSA LOOP 
   for(r in 1:PSA_length){
@@ -97,18 +104,22 @@ t1 = Sys.time()
     
     ### EXTRACT QALY+COST RESULTS FROM MARKOV LOOP
     # baseline
+    
+    
     res_base  = get_CE(trace=markov_trace_base,
                        utils = m$state_utils,
                        costs = m$base_state_costs,
                        iv_rates = m$base_iv_days,
-                       iv_disutil = m$iv_excer_disutil)
+                       iv_disutil = m$iv_excer_disutil,
+                       DRQ = DR_QALY, DRC= DR_COSTS)
     # intervention 
     res_int  = get_CE(trace=markov_trace_int,
                        utils = m$state_utils,
                        costs = m$int_state_costs,
                        extra_costs = m$int_costs_once,
                        iv_rates = m$int_iv_days,
-                       iv_disutil = m$iv_excer_disutil)
+                       iv_disutil = m$iv_excer_disutil,
+                      DRQ = DR_QALY, DRC= DR_COSTS)
     # calculate ICER
     Icer = (res_base$state_costs_disc-res_int$state_costs_disc)/ (res_base$QALY_disc - res_int$QALY_disc)
     

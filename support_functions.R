@@ -259,7 +259,6 @@ get_CE = function(
   iv_disutil = excer_disutil,
   DRQ = DR_QALY, DRC= DR_COSTS,
   return.sum = T){
-  
   # half cycle correction
   trace_hcc = matrix(nrow=dim(trace)[1]-1,ncol=dim(trace)[2],data=NA)
   for(j in 2:dim(trace )[1]){
