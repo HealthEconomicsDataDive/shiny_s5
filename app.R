@@ -23,8 +23,9 @@ appCSS <- "
                     opacity: 0.9;
                     z-index: 100;
                     font-size:30px;
-                    left: 0;
+                    left: 100px;
                     right: 0;
+                    top: 0;
                     height: 100%;
                     text-align: center;
                     color: cyan;
@@ -47,6 +48,7 @@ ui <- shinyUI({dashboardPage(
     
 ## --------------- SIDE BAR --------------
     dashboardSidebar(
+        # logo
         span(HTML('<img src="R-pic.png" style="height:200px; margin-top:-0.5em;">')),
         
         sliderInput(inputId = "PSA_len_slider","How many PSA?",1,2000,value = 100),
@@ -117,7 +119,15 @@ ui <- shinyUI({dashboardPage(
         
         br(),
         
+<<<<<<< HEAD
         textOutput("show_runtime"),
+=======
+        
+        
+        br(),
+        
+        h4(textOutput("show_runtime")),
+>>>>>>> 4016fcd2a56bf3450710a032129e41e8d7611583
         
         useShinyjs()
         ),
