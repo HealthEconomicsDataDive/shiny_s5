@@ -25,7 +25,8 @@ markov_s5_wrapper = function(set_PSA = NULL,
                              set_start_age = 16,
                              set_DR_COSTS = 0.035,
                              set_DR_QALY = 0.035,
-                             set_int_costs_yearly = NULL
+                             set_int_costs_yearly = NULL,
+                             set_iv_day_costs = NULL
                              ){
 
 t1 = Sys.time()
@@ -64,7 +65,12 @@ t1 = Sys.time()
     set_int_costs_yearly = 5000
   }
   
-  psa.input <- replicate(n=PSA_length,expr = draw_params(int_costs_yearly = set_int_costs_yearly),simplify = F)                     
+  psa.input <- replicate(n=PSA_length,
+                         expr = draw_params(int_costs_yearly = set_int_costs_yearly,
+                                            iv_day_costs = set_iv_day_costs
+                                            ),
+                         
+                         simplify = F)                     
   
 ## RUN PSA LOOP 
   for(r in 1:PSA_length){

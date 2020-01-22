@@ -11,14 +11,15 @@ library(shinydashboard)
 library(shinyjs)
 library(MCMCpack)
 library(ggplot2)
-
+library(DT)
+# install.packages("shinysky")
 
 source("./support_functions.R")
 source("./Markov_PSA.R")
 
 
 # Define UI for application that draws a histogram
-ui <- shinyUI(dashboardPage(
+ui <- shinyUI({dashboardPage(
     
     dashboardHeader(),
     
@@ -30,10 +31,11 @@ ui <- shinyUI(dashboardPage(
         
         numericInput(inputId = "cycle_len_input","Horizon",min = 1,max=86,value = 86),
         
+        numericInput(inputId = "iv_day_costs_input","IC day costs",min = 0,max=NA,value = 360.1),
+        
         numericInput(inputId = "int_costs_yearly_input","Annual intervention costs",min = 0,max=NA,value = 5500),
         
         actionButton("action_GO","Run Model")
-        
     ),
 
 ## --------------- BODY --------------
@@ -52,6 +54,7 @@ ui <- shinyUI(dashboardPage(
                                 /* main sidebar */
                                 .skin-blue .main-sidebar {
                                 background-color: #333333;
+                                color:black;
                                 }
 
                                 /* body */
@@ -81,22 +84,25 @@ ui <- shinyUI(dashboardPage(
 
 title = "Sample Shiny",
 skin = "blue"
-)
-)
+)} )
 
 ## ------------------ SERVER ---------------------
 
-    # Define server logic required to draw a histogram
-    server <- function(input, output) {
+# Define server logic required to draw a histogram
+server <- function(input, output) {
     
         observeEvent(input$action_GO, ignoreNULL=F, {
+            
+            
+            
             
             # run model with updated input
             res = markov_s5_wrapper(set_PSA = input$PSA_len_slider,
                                     set_start_age = input$start_age_input,
                                     set_cycle_length = input$cycle_len_input,
                                     set_int_costs_yearly = input$int_costs_yearly_input,
-                                    set_DR_COSTS = 0.035,set_DR_QALY = 0.035
+                                    set_DR_COSTS = 0.035,set_DR_QALY = 0.035,
+                                    set_iv_day_costs = input$iv_day_costs_input
                                         
                                         )
             
@@ -110,8 +116,11 @@ skin = "blue"
             
             output$show_runtime <- renderText({
                 # res$run_time
-        paste("PSA runtime with",input$PSA_len_slider,"iterations:",res$runtime)
+                paste("PSA runtime with",input$PSA_len_slider,"iterations:",res$runtime)
             })
+            
+            
+            
             
         })
         
