@@ -95,7 +95,9 @@ skin = "blue"
             res = markov_s5_wrapper(set_PSA = input$PSA_len_slider,
                                     set_start_age = input$start_age_input,
                                     set_cycle_length = input$cycle_len_input,
-                                    set_int_costs_yearly = input$int_costs_yearly_input
+                                    set_int_costs_yearly = input$int_costs_yearly_input,
+                                    set_DR_COSTS = 0.035,set_DR_QALY = 0.035
+                                        
                                         )
             
             output$CE_plane <- renderPlot({
