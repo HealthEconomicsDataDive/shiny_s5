@@ -49,7 +49,7 @@ ui <- shinyUI({dashboardPage(
 ## --------------- SIDE BAR --------------
     dashboardSidebar(
         # logo
-        span(HTML('<img src="R-pic.png" style="height:200px; margin-top:-0.5em;">')),
+        span(HTML('<img src="logo_small.png" style="height:200px; margin-top:-0.5em; margin-left:2em">')),
         
         sliderInput(inputId = "PSA_len_slider","How many PSA?",1,2000,value = 100),
         
@@ -119,15 +119,15 @@ ui <- shinyUI({dashboardPage(
         
         br(),
         
-<<<<<<< HEAD
-        textOutput("show_runtime"),
-=======
+
+#        textOutput("show_runtime"),
+
         
         
         br(),
         
-        h4(textOutput("show_runtime")),
->>>>>>> 4016fcd2a56bf3450710a032129e41e8d7611583
+#        h4(textOutput("show_runtime")),
+
         
         useShinyjs()
         ),

@@ -153,7 +153,8 @@ t1 = Sys.time()
       # labels
       xlab("Incremental QALY") +
       ylab("Incremental Costs") +
-      theme_minimal()  + 
+      theme_minimal()  +
+      stat_ellipse()
       NULL
     
     # ce_plane_plot
