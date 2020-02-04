@@ -1,0 +1,13 @@
+name: shiny_s5
+title: shiny_s5
+username:
+account: rasmith3
+server: shinyapps.io
+hostUrl: https://api.shinyapps.io/v1
+appId: 1756990
+bundleId: 2773650
+url: https://rasmith3.shinyapps.io/shiny_s5/
+when: 1580808010.82128
+asMultiple: FALSE
+asStatic: FALSE
+ignoredFiles: app_with_table.R

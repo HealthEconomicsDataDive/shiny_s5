@@ -168,7 +168,7 @@ t1 = Sys.time()
       ylab("Prob. cost effective") +
       xlab("Willingness to pay threshold") +
       theme_minimal()+
-      ggtitle("Cost acceptibility curve") +
+      #ggtitle("Cost acceptibility curve") +
       theme(legend.position = "bottom") +
       scale_color_manual(name="",values = c("blue","magenta"))
     # ceac_plot
