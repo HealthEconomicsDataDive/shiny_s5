@@ -78,7 +78,9 @@ ui <- navbarPage(
                                
                                )),
              
-             column(6,fluidRow(h4("Probabilities"),align="center"
+             column(6,fluidRow(h4("Probabilities"),align="center",
+                               
+                               sliderInput(inputId = "transplant_rate_mean","Set Transplant Rate Mean",min = 0,max = 0.05,value = 0.003)
                                
                                )) 
              ), # end row
@@ -161,10 +163,18 @@ ui <- navbarPage(
                                      
                                      '))),
            
-           actionButton("action_GO","Run PSA",align="center"),
+           fluidRow(column(2),
+                    column(4, align='center', 
+                           actionButton("action_GO","Run PSA",align="center")),
+                    column(4, align='center',
+                           textOutput("show_runtime")
+                           )),
+                    
+           br(),
+                    
            
            fluidRow(column(2),
-                    column(8,align="center",
+                    column(8, align="center",
                            h4("Results Table: Central Estimates"),
                            tableOutput("result_table")),
                     column(2)),#actionButton("trump_GO","Trump_me"),
@@ -187,7 +197,11 @@ ui <- navbarPage(
                     column(2)), # end row
            
            
-           #        textOutput("show_runtime"),
+          #fluidRow(column(2),
+          #         column(8,align="center",
+          #                textOutput("show_runtime")),
+          #         column(2)),
+                                    
            
           # br(),
            
@@ -253,7 +267,8 @@ server <- function(input, output) {
                                     set_int_costs_yearly = input$int_costs_yearly_input,
                                     set_DR_COSTS = input$dr_costs, #0.035,
                                     set_DR_QALY = input$dr_qalys, # 0.035,
-                                    set_iv_day_costs = input$iv_day_costs_input
+                                    set_iv_day_costs = input$iv_day_costs_input,
+                                    set_transplant_rate_mean = input$transplant_rate_mean
                                         
                                         )
             
@@ -278,8 +293,8 @@ server <- function(input, output) {
             })
             
             output$show_runtime <- renderText({
-                # res$run_time
-                paste("PSA runtime with",input$PSA_len_slider,"iterations:",res$runtime)
+                runtime <- res$runtime
+                paste("PSA runtime with",input$PSA_len_slider,"iterations:",runtime)
             })
             
             hide(id = "loading-content", anim = TRUE, animType = "fade",time = 1)    

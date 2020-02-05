@@ -37,7 +37,8 @@ draw_params = function(death_prob=NULL,
                       drug_use_costs=NULL,
                       iv_drug_cost=NULL,
                       iv_day_costs=NULL,
-                      iv_prop_hosp_days = NULL
+                      iv_prop_hosp_days = NULL,
+                      transplant_rate_mean = NULL
                       ){
   
   # age-dependent survival function / death probabilities
@@ -66,7 +67,7 @@ draw_params = function(death_prob=NULL,
   if(is.null(transplant_rate)){
     transplant_rate = -1
     while(transplant_rate<0){
-      transplant_rate = rnorm(n=1,mean=0.00432827833974037,sd=0.00432827833974037*0.1)
+      transplant_rate = rnorm(n=1,mean=transplant_rate_mean,sd=transplant_rate_mean*0.1)
     }
   }
   # baseline transistion from s1

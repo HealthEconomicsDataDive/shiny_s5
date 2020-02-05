@@ -26,7 +26,8 @@ markov_s5_wrapper = function(set_PSA = NULL,
                              set_DR_COSTS = 0.035,
                              set_DR_QALY = 0.035,
                              set_int_costs_yearly = NULL,
-                             set_iv_day_costs = NULL
+                             set_iv_day_costs = NULL,
+                             set_transplant_rate_mean = NULL
                              ){
 
 t1 = Sys.time()
@@ -34,7 +35,8 @@ t1 = Sys.time()
   
 
 
-### Setup
+### Setup inputs from User Interface.
+
   cycle_length = set_cycle_length          # observational period - 84 years
   start_age = set_start_age             # age at which agents enter the model - 16
   DR_QALY = set_DR_QALY
@@ -67,7 +69,8 @@ t1 = Sys.time()
   
   psa.input <- replicate(n=PSA_length,
                          expr = draw_params(int_costs_yearly = set_int_costs_yearly,
-                                            iv_day_costs = set_iv_day_costs
+                                            iv_day_costs = set_iv_day_costs,
+                                            transplant_rate_mean = set_transplant_rate_mean
                                             ),
                          
                          simplify = F)                     
