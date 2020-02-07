@@ -13,6 +13,7 @@ library(MCMCpack)
 library(ggplot2)
 library(DT)
 library(shinycssloaders)
+library(kableExtra)
 
 # loading screen   
 appCSS <- "
@@ -47,13 +48,35 @@ ui <- navbarPage(
   # TAB 1 - BACKGROUND
   tabPanel('Background',
            
-           # picture showing model structure
-           span(HTML('<img src="5S_markov.PNG" style="height:1000px; margin-top:-0.5em;">'))
-           ), # close tab
+           h3("An Early Health Economic Analysis of the Potential Cost Effectiveness of an Adherence Intervention to Improve Outcomes for Patients with Cystic Fibrosis"),
            
-           # insert text to be added to the background tab.       
-           #"Background Information"),
-  
+           br(),br(),br(),
+           
+           HTML("This is an example R-Shiny model built around a markov model originally created by Paul Tappenden, Susannah Sadler & Martin Wildman published <br> in PharmacoEcononomics in 2017."),
+           
+           helpText(a("Tappenden et al. (2017)",     href="https://doi.org/10.1007/s40273-017-0500-x")),
+           
+           br(),
+           
+           HTML("It was originally created using Excel, but recoded in R by Paul Schneider in 2019, we have now created this app as a Shiny 'Front End'"),
+           
+           br(),br(),
+           
+           HTML("In the model individuals can be in one of five health states, three of which relate to lung function, one post transplant and dead"),
+           
+           br(),br(),
+           
+           span(HTML('<img src="Diagram.PNG" style="height:300px; margin-top:-0.5em;">')),  # model structure
+           
+           br(),br(),
+           
+           HTML("As the user, you can change the model parameters in 'Inputs', and run the model in 'PSA Results'")
+           
+           
+
+  ), # close tab
+           
+
   # TAB 2 - INPUTS
   tabPanel('Inputs', 
            fluidRow(
@@ -111,19 +134,19 @@ ui <- navbarPage(
   
   # TAB 3 - Deterministic Results
   
-  tabPanel('Deterministic Results',
-           #actionButton("action_GO","Run Deterministic Model",align="center"),
-           
-           fluidRow(column(6, align="center",
-                           h4("Markov Trace Baseline")#, # Markov Trace
-                           ),#plotOutput("CEAC_plot")),
-                    column(6,align="center",
-                           h4("Markov Trace Intervention")#, # Markov Trace
-                           )#plotOutput("CEAC_plot"))
-                    
-                    )# end row
-           
-           ),
+  #tabPanel('Deterministic Results',
+  #         #actionButton("action_GO","Run Deterministic Model",align="center"),
+  #         
+  #         fluidRow(column(6, align="center",
+  #                         h4("Markov Trace Baseline")#, # Markov Trace
+  #                         ),#plotOutput("CEAC_plot")),
+  #                  column(6,align="center",
+  #                         h4("Markov Trace Intervention")#, # Markov Trace
+  #                         )#plotOutput("CEAC_plot"))
+  #                  
+  #                  )# end row
+  #         
+  #         ), # end tab
   
   # TAB 3 - PSA Results
   tabPanel('PSA Results',
@@ -215,28 +238,15 @@ ui <- navbarPage(
   
   tabPanel('Further Information',  # who we are
            
-           HTML("This RShiny was created by <strong>Robert Smith & Paul Schneider</strong> to demonstrate the feasibility of using R-Shiny in Health Technology Assessment."),
+           HTML("This RShiny was created by <strong>Robert Smith & Paul Schneider</strong> to demonstrate the feasibility of using R-Shiny in Health Technology Assessment, and as a teaching tool."),
            
-           br(),br(),br(),
+           br(),br(),br(), 
            
-           HTML("The underlying model is based on a paper by Paul Tappenden, Susannah Sadler & Martin Wildman Published in PharmacoEcononomics in 2017 entitled:"),
-           
-           br(),
-           
-           HTML("An Early Health Economic Analysis of the Potential Cost Effectiveness of an Adherence Intervention to Improve Outcomes for Patients with Cystic Fibrosis"),
-           helpText(   a("https://doi.org/10.1007/s40273-017-0500-x",     href="https://doi.org/10.1007/s40273-017-0500-x")),
-           
-           br(),br(),
-           
-           HTML("It was originally created using Excel, but recoded in R by Paul Schneider in 2019, we have now created this app as a user 'Front End'"),
-           
-           br(),br(),
-             
-           HTML("Both Robert and Paul and part of the  Wellcome Trust Doctoral Training Centre in Public Health Economics and Decision Science at the University of Sheffield"),
+           HTML("Both Robert and Paul and part of the Wellcome Trust Doctoral Training Centre in Public Health Economics and Decision Science at the University of Sheffield, they have experience in working with stakeholders to improve the transparency of economic models "),
            
            br(),br(),br(),  
            
-           HTML("For more information contact:<br><br><strong>Robert Smith</strong><br>University of Sheffield<br>rasmith3@sheffield.ac.uk<br>https://github.com/RobertASmith"),
+           HTML("For more information contact:<br><br><strong>Robert Smith</strong><br>University of Sheffield<br>rasmith3@sheffield.ac.uk<br>https://github.com/RobertASmith<br><br>or <br><br><strong>Paul Schneider</strong><br>University of Sheffield<br>p.schneider@sheffield.ac.uk<br>https:bitowaqr.github.io<br>"),
            
            br(),br(),br(),br(),
              
@@ -259,9 +269,11 @@ server <- function(input, output) {
             hide("app-content")
             show(id = "loading-content", anim = TRUE, animType = "fade",time = 1)    
             
+            psa_number <- input$PSA_len_slider
             
             # run model with updated input
-            res = markov_s5_wrapper(set_PSA = input$PSA_len_slider,
+            res = markov_s5_wrapper(
+                                    set_PSA = input$PSA_len_slider,
                                     set_start_age = input$start_age_input,
                                     set_cycle_length = input$cycle_len_input,
                                     set_int_costs_yearly = input$int_costs_yearly_input,
@@ -269,19 +281,28 @@ server <- function(input, output) {
                                     set_DR_QALY = input$dr_qalys, # 0.035,
                                     set_iv_day_costs = input$iv_day_costs_input,
                                     set_transplant_rate_mean = input$transplant_rate_mean
-                                        
-                                        )
+                                    )
             
             output$result_table <- renderTable({
-              data.frame(
-                Option = c("Adherance Intervention","Current Care"),
-                QALYs = c(res$res_table[2],res$res_table[1]),
-                Costs = c(res$res_table[4],res$res_table[5]),
-                Inc.QALYs = c(res$res_table[3],NA),
-                Inc.Costs = c(res$res_table[6],NA),
-                ICER = c(res$res_table[6]/res$res_table[3],NA)
-              )
-            })
+              
+              icer <- res$res_table[6] / res$res_table[3]
+              
+              if(icer < 0 & res$res_table[6] > 0 ){
+                icer <- "Dominated"
+              }
+              
+              if(icer < 0 & res$res_table[3] > 0 ){
+                icer <- "Dominating"
+              }
+              
+                         data.frame(Option = c("Adherance Intervention","Current Care"),
+                                    QALYs = c(prettyNum(round(res$res_table[2],2), big.mark=","),prettyNum(round(res$res_table[1],2), big.mark=",")),
+                                    Costs = c(prettyNum(round(res$res_table[4],0), big.mark=","),prettyNum(round(res$res_table[5],0), big.mark=",")),
+                                    Inc.QALYs = c(prettyNum(round(res$res_table[3],2), big.mark=","),NA),
+                                    Inc.Costs = c(prettyNum(round(res$res_table[6],0), big.mark=","),NA),
+                                    ICER = c(prettyNum(round(icer,0), big.mark=","),NA)) # close data frame
+                          
+              }) # close render table
             
             
             output$CE_plane <- renderPlot({
@@ -293,18 +314,20 @@ server <- function(input, output) {
             })
             
             output$show_runtime <- renderText({
-                runtime <- res$runtime
-                paste("PSA runtime with",input$PSA_len_slider,"iterations:",runtime)
+                runtime    <- res$runtime
+                
+                paste("PSA runtime with",psa_number,"iterations:",runtime)
             })
             
             hide(id = "loading-content", anim = TRUE, animType = "fade",time = 1)    
+            
             show("app-content")
             
             
-        })
+        }) # close observe event
         
         
-    }
+    } # close server
     
 
 
