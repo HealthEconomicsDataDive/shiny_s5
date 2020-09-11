@@ -119,15 +119,9 @@ ui <- shinyUI({dashboardPage(
         
         br(),
         
-<<<<<<< HEAD
-        textOutput("show_runtime"),
-=======
-        
-        
-        br(),
         
         h4(textOutput("show_runtime")),
->>>>>>> 4016fcd2a56bf3450710a032129e41e8d7611583
+
         
         useShinyjs()
         ),
